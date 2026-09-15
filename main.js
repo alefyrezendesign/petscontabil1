@@ -619,3 +619,42 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  // Text Reveal on Scroll Animation
+  const revealText = document.getElementById('reveal-text');
+  if (revealText) {
+    const text = revealText.innerText;
+    revealText.innerHTML = '';
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.textContent = text[i];
+      span.classList.add('reveal-char');
+      revealText.appendChild(span);
+    }
+
+    const chars = revealText.querySelectorAll('.reveal-char');
+    window.addEventListener('scroll', () => {
+      const rect = revealText.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const elementCenter = rect.top + rect.height / 2;
+      const viewportCenter = windowHeight / 2;
+      
+      const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
+      const maxDistance = windowHeight / 2; 
+      
+      let progress = 1 - (distanceFromCenter / maxDistance);
+      progress = Math.max(0, Math.min(1, progress));
+      
+      chars.forEach((char, index) => {
+        const charThreshold = index / chars.length;
+        if (progress > charThreshold * 0.8) { 
+           char.classList.add('word-yellow');
+        } else {
+           char.classList.remove('word-yellow');
+        }
+      });
+    });
+    
+    window.dispatchEvent(new Event('scroll'));
+  }

@@ -1723,3 +1723,8 @@ footer {
     padding: 15px 0 !important;
   }
 }
+
+/* Scroll reveal yellow word */
+.word-yellow {
+  color: var(--color-yellow) !important;
+}
