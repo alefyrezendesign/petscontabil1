@@ -1732,3 +1732,44 @@ footer {
   position: sticky !important;
 }
 
+@media (max-width: 768px) {
+  /* Remove sticky and wrapper height to eliminate all gaps */
+  #demonstracao-wrapper {
+    height: auto !important;
+    padding: 20px 0 40px !important;
+  }
+  #demonstracao-wrapper > section {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    padding: 0 15px !important;
+    overflow: visible !important;
+  }
+  
+  /* Perfect card proportions */
+  #demonstracao-card {
+    height: 55vh !important;
+    max-height: 500px !important;
+    width: 100% !important;
+    border-radius: 24px !important;
+  }
+  
+  /* Force text to center perfectly in the card */
+  #demonstracao-card > div:nth-child(3) {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  #demonstracao-words {
+    font-size: 26px !important;
+    text-align: center !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+}
