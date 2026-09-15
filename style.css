@@ -1754,22 +1754,22 @@ footer {
     border-radius: 24px !important;
   }
   
-  /* Force text to center perfectly in the card */
+  /* Force text to align to top-left with padding in the card */
   #demonstracao-card > div:nth-child(3) {
     width: 100% !important;
     height: 100% !important;
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 20px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding: 15% 20px 0 25px !important;
     box-sizing: border-box !important;
   }
 
   #demonstracao-words {
     font-size: 26px !important;
-    text-align: center !important;
+    text-align: left !important;
     width: 100% !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     padding: 0 !important;
   }
 }
