@@ -1580,10 +1580,9 @@ footer {
   .conceito-accordion .acc-item { padding: 0 !important; }
   
   /* 7. VIDEO STICKY SECTION */
-  #demonstracao-wrapper { height: auto !important; padding: 50px 0 !important; background: var(--color-purple-faded) !important; }
-  #demonstracao-wrapper > section { position: relative !important; height: auto !important; min-height: 350px !important; padding: 0 20px !important; display: block !important; }
-  #demonstracao-card { height: 350px !important; }
-  #demonstracao-words { font-size: 22px !important; padding: 30px 20px !important; position: relative !important; z-index: 10 !important; }
+  #demonstracao-wrapper > section { padding: 0 20px !important; }
+  #demonstracao-card { height: 50vh !important; }
+  #demonstracao-words { font-size: 20px !important; padding: 20px !important; }
 
   /* 8. MARQUEE / SEGMENTOS */
   .marquee-section { padding: 50px 0 !important; }
