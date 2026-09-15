@@ -282,143 +282,191 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Ghost Form Logic
-  const customForm = document.getElementById('custom-diagnostico-form');
-  const rdContainer = document.getElementById('rd-ghost-container');
-  const feedbackEl = document.getElementById('form-feedback');
-  const submitBtn = document.getElementById('custom_submit_btn');
+  // Form Steps Logic Setup
+  function setupFormSteps(prefix) {
+    const step1 = document.getElementById(prefix + 'step-1');
+    const step2 = document.getElementById(prefix + 'step-2');
+    const btnNextStep = document.getElementById(prefix + 'btn-next-step');
+    const btnPrevStep = document.getElementById(prefix + 'btn-prev-step');
+    const dot1 = document.getElementById(prefix + 'dot-1');
+    const dot2 = document.getElementById(prefix + 'dot-2');
+    const stepIndicator = document.getElementById(prefix + 'step-indicator');
 
-  if (customForm && rdContainer) {
-    customForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const nome = document.getElementById('custom_nome').value;
-      const email = document.getElementById('custom_email').value;
-      const celular = document.getElementById('custom_celular').value;
-      const segmento = document.getElementById('custom_segmento').value;
-      const cargo = document.getElementById('custom_cargo').value;
-      const dificuldade = document.getElementById('custom_dificuldade').value;
-      const cidade = document.getElementById('custom_cidade').value;
-      const estado = document.getElementById('custom_estado').value;
-      const conheceu = document.getElementById('custom_conheceu').value;
-      
-      const rdForm = rdContainer.querySelector('form');
-      if (!rdForm) {
-        showFeedback('Erro: Serviço indisponível no momento. Tente novamente.', 'error');
-        return;
-      }
+    if (btnNextStep && btnPrevStep) {
+      btnNextStep.addEventListener('click', () => {
+        // Validate Step 1 fields
+        const inputs = step1.querySelectorAll('input, select');
+        let isValid = true;
+        inputs.forEach(input => {
+          if (!input.checkValidity()) {
+            input.reportValidity();
+            isValid = false;
+          }
+        });
 
-      const setRDValue = (nameKeywords, labelText, value) => {
-        let input = rdForm.querySelector(`input[name*="${nameKeywords}"], select[name*="${nameKeywords}"]`);
-        if (!input) {
-          const labels = Array.from(rdForm.querySelectorAll('label'));
-          const matchingLabel = labels.find(l => l.textContent.toLowerCase().includes(labelText.toLowerCase()));
-          if (matchingLabel) {
-            const forAttr = matchingLabel.getAttribute('for');
-            if (forAttr) {
-              input = document.getElementById(forAttr);
-            }
-            if (!input) {
-              const wrapper = matchingLabel.closest('div, li, p');
-              if (wrapper) {
-                input = wrapper.querySelector('input, select');
+        if (isValid) {
+          step1.classList.remove('active');
+          step2.classList.add('active');
+          if(dot1) dot1.classList.remove('active');
+          if(dot2) dot2.classList.add('active');
+          if(stepIndicator) stepIndicator.textContent = 'Passo 2 de 2';
+        }
+      });
+
+      btnPrevStep.addEventListener('click', () => {
+        step2.classList.remove('active');
+        step1.classList.add('active');
+        if(dot2) dot2.classList.remove('active');
+        if(dot1) dot1.classList.add('active');
+        if(stepIndicator) stepIndicator.textContent = 'Passo 1 de 2';
+      });
+    }
+  }
+
+  setupFormSteps('');
+  setupFormSteps('modal-');
+
+  // Ghost Form Logic Setup
+  function setupGhostForm(prefix, formId, rdContainerId, submitBtnId, feedbackId) {
+    const customForm = document.getElementById(formId);
+    const rdContainer = document.getElementById(rdContainerId);
+    const feedbackEl = document.getElementById(feedbackId);
+    const submitBtn = document.getElementById(submitBtnId);
+
+    if (customForm && rdContainer) {
+      customForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const nome = document.getElementById(prefix + 'nome').value;
+        const email = document.getElementById(prefix + 'email').value;
+        const celular = document.getElementById(prefix + 'celular').value;
+        const segmento = document.getElementById(prefix + 'segmento').value;
+        const cargo = document.getElementById(prefix + 'cargo').value;
+        const dificuldade = document.getElementById(prefix + 'dificuldade').value;
+        const cidade = document.getElementById(prefix + 'cidade').value;
+        const estado = document.getElementById(prefix + 'estado').value;
+        const conheceu = document.getElementById(prefix + 'conheceu').value;
+        
+        const rdForm = rdContainer.querySelector('form');
+        if (!rdForm) {
+          showFeedback('Erro: Serviço indisponível no momento. Tente novamente.', 'error');
+          return;
+        }
+
+        const setRDValue = (nameKeywords, labelText, value) => {
+          let input = rdForm.querySelector(`input[name*="${nameKeywords}"], select[name*="${nameKeywords}"]`);
+          if (!input) {
+            const labels = Array.from(rdForm.querySelectorAll('label'));
+            const matchingLabel = labels.find(l => l.textContent.toLowerCase().includes(labelText.toLowerCase()));
+            if (matchingLabel) {
+              const forAttr = matchingLabel.getAttribute('for');
+              if (forAttr) {
+                input = document.getElementById(forAttr);
+              }
+              if (!input) {
+                const wrapper = matchingLabel.closest('div, li, p');
+                if (wrapper) {
+                  input = wrapper.querySelector('input, select');
+                }
               }
             }
           }
-        }
-        if (input) {
-          input.value = value;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      };
-
-      submitBtn.innerHTML = 'ENVIANDO...';
-      submitBtn.disabled = true;
-      feedbackEl.style.display = 'none';
-
-      setRDValue('name', 'nome', nome);
-      setRDValue('email', 'email', email);
-      setRDValue('mobile', 'celular', celular);
-      setRDValue('phone', 'telefone', celular);
-      setRDValue('city', 'cidade', cidade);
-      setRDValue('state', 'estado', estado);
-      setRDValue('segmento', 'segmento', segmento);
-      setRDValue('cargo', 'cargo', cargo);
-      setRDValue('dificuldade', 'dificuldade', dificuldade);
-      setRDValue('conheceu', 'conheceu', conheceu);
-
-      const originalAlert = window.alert;
-      // Suprime o alert horrível que o RD Station pode disparar
-      window.alert = function() {
-        console.log("Alerta nativo bloqueado");
-      };
-
-      const rdSubmitBtn = rdForm.querySelector('button[type="submit"], input[type="submit"]');
-      if (rdSubmitBtn) {
-        rdSubmitBtn.click();
-      } else {
-        rdForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-      }
-      
-      // Watch for success
-      const observer = new MutationObserver((mutations) => {
-        const successMsg = rdContainer.querySelector('.bricks-form__success, .rd-form-success, .bricks-form__thank-you');
-        if (successMsg || !rdContainer.querySelector('form')) {
-          showFeedback('Obrigado! Seu formulário foi recebido com sucesso.', 'success');
-          customForm.reset();
-          observer.disconnect();
-          window.alert = originalAlert; // restaura
-        }
-      });
-      observer.observe(rdContainer, { childList: true, subtree: true });
-      
-      setTimeout(() => {
-        if (submitBtn.disabled) {
-           showFeedback('Obrigado! Seu formulário foi recebido com sucesso!', 'success');
-           customForm.reset();
-           window.alert = originalAlert; // restaura
-        }
-      }, 3000);
-    });
-
-    function showFeedback(msg, type) {
-      if (type === 'success') {
-        const modal = document.getElementById('success-modal');
-        if (modal) {
-          modal.style.display = 'flex';
-          
-          const closeBtn = document.getElementById('modal-close-btn');
-          if (closeBtn) {
-            closeBtn.onclick = () => {
-              modal.style.display = 'none';
-            };
+          if (input) {
+            input.value = value;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            input.dispatchEvent(new Event('input', { bubbles: true }));
           }
-          // Close on overlay click
-          modal.onclick = (e) => {
-            if (e.target === modal) modal.style.display = 'none';
-          };
+        };
+
+        submitBtn.innerHTML = 'ENVIANDO...';
+        submitBtn.disabled = true;
+        if(feedbackEl) feedbackEl.style.display = 'none';
+
+        setRDValue('name', 'nome', nome);
+        setRDValue('email', 'email', email);
+        setRDValue('mobile', 'celular', celular);
+        setRDValue('phone', 'telefone', celular);
+        setRDValue('city', 'cidade', cidade);
+        setRDValue('state', 'estado', estado);
+        setRDValue('segmento', 'segmento', segmento);
+        setRDValue('cargo', 'cargo', cargo);
+        setRDValue('dificuldade', 'dificuldade', dificuldade);
+        setRDValue('conheceu', 'conheceu', conheceu);
+
+        const originalAlert = window.alert;
+        window.alert = function() {
+        };
+
+        const rdSubmitBtn = rdForm.querySelector('button[type="submit"], input[type="submit"]');
+        if (rdSubmitBtn) {
+          rdSubmitBtn.click();
+        } else {
+          rdForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
         }
-        submitBtn.innerHTML = 'SOLICITAR MEU DIAGNÓSTICO';
-        submitBtn.disabled = false;
-        feedbackEl.style.display = 'none';
-      } else {
-        feedbackEl.style.display = 'block';
-        feedbackEl.textContent = msg;
-        submitBtn.innerHTML = 'SOLICITAR MEU DIAGNÓSTICO';
-        submitBtn.disabled = false;
         
-        feedbackEl.style.backgroundColor = 'rgba(220, 53, 69, 0.1)';
-        feedbackEl.style.color = '#dc3545';
-        feedbackEl.style.border = '1px solid #dc3545';
+        // Watch for success
+        const observer = new MutationObserver((mutations) => {
+          const successMsg = rdContainer.querySelector('.bricks-form__success, .rd-form-success, .bricks-form__thank-you');
+          if (successMsg || !rdContainer.querySelector('form')) {
+            showFeedback('Obrigado! Seu formulário foi recebido com sucesso.', 'success');
+            customForm.reset();
+            observer.disconnect();
+            window.alert = originalAlert; // restaura
+          }
+        });
+        observer.observe(rdContainer, { childList: true, subtree: true });
+        
+        setTimeout(() => {
+          if (submitBtn.disabled) {
+             showFeedback('Obrigado! Seu formulário foi recebido com sucesso!', 'success');
+             customForm.reset();
+             window.alert = originalAlert; // restaura
+          }
+        }, 3000);
+      });
+
+      function showFeedback(msg, type) {
+        if (type === 'success') {
+          const modal = document.getElementById('success-modal');
+          if (modal) {
+            modal.style.display = 'flex';
+            
+            const closeBtn = document.getElementById('modal-close-btn');
+            if (closeBtn) {
+              closeBtn.onclick = () => {
+                modal.style.display = 'none';
+              };
+            }
+            modal.onclick = (e) => {
+              if (e.target === modal) modal.style.display = 'none';
+            };
+          } else if (feedbackEl) {
+            feedbackEl.textContent = msg;
+            feedbackEl.style.display = 'block';
+            feedbackEl.style.color = '#155724';
+            feedbackEl.style.backgroundColor = '#d4edda';
+            feedbackEl.style.border = '1px solid #c3e6cb';
+          }
+        } else {
+          if(feedbackEl) {
+            feedbackEl.textContent = msg;
+            feedbackEl.style.display = 'block';
+            feedbackEl.style.color = '#721c24';
+            feedbackEl.style.backgroundColor = '#f8d7da';
+            feedbackEl.style.border = '1px solid #f5c6cb';
+          }
+        }
+        submitBtn.innerHTML = 'SOLICITAR DIAGNÓSTICO';
+        submitBtn.disabled = false;
       }
     }
   }
 
-});
+  setupGhostForm('custom_', 'custom-diagnostico-form', 'rd-ghost-container', 'custom_submit_btn', 'form-feedback');
+  setupGhostForm('modal_', 'modal-diagnostico-form', 'modal-rd-ghost-container', 'modal_submit_btn', 'modal-form-feedback');
 
   // Intersection Observer for Scroll Animations
-  const observerOptions = {
+  const revealObserverOptions = {
     root: null,
     rootMargin: '0px',
     threshold: 0.15
@@ -430,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.unobserve(entry.target); // Animate only once
       }
     });
-  }, observerOptions);
+  }, revealObserverOptions);
 
   document.querySelectorAll('.reveal').forEach((el) => {
     revealObserver.observe(el);
@@ -468,3 +516,106 @@ document.addEventListener('DOMContentLoaded', () => {
     typeObserver.observe(el);
   });
 
+  // --- Form Modal Trigger Logic ---
+  const formModal = document.getElementById('form-modal');
+  const formModalClose = document.getElementById('form-modal-close');
+  const modalTriggers = document.querySelectorAll('a[href="#diagnostico"], .form-modal-trigger');
+
+  if (formModal && modalTriggers.length > 0) {
+    modalTriggers.forEach(trigger => {
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        formModal.style.display = 'flex';
+      });
+    });
+
+    if (formModalClose) {
+      formModalClose.addEventListener('click', () => {
+        formModal.style.display = 'none';
+      });
+    }
+
+    formModal.addEventListener('click', (e) => {
+      if (e.target === formModal) {
+        formModal.style.display = 'none';
+      }
+    });
+  }
+});
+
+// Mobile Menu Toggle
+document.addEventListener('DOMContentLoaded', () => {
+  const mobileBtn = document.querySelector('.mobile-menu-btn');
+  const mainNav = document.querySelector('.main-nav');
+  if (mobileBtn && mainNav) {
+    mobileBtn.addEventListener('click', () => {
+      mainNav.classList.toggle('menu-open');
+      const icon = mobileBtn.querySelector('i');
+      if (mainNav.classList.contains('menu-open')) {
+        icon.classList.remove('ph-list');
+        icon.classList.add('ph-x');
+      } else {
+        icon.classList.remove('ph-x');
+        icon.classList.add('ph-list');
+      }
+    });
+    
+    // Close menu when clicking a link
+    mainNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('menu-open');
+        const icon = mobileBtn.querySelector('i');
+        icon.classList.remove('ph-x');
+        icon.classList.add('ph-list');
+      });
+    });
+  }
+});
+  
+  // Mobile Hamburger Menu Logic
+  const hamburgerBtn = document.querySelector('.hamburger-btn');
+  const mainNav = document.querySelector('.main-nav');
+  
+  if (hamburgerBtn && mainNav) {
+    hamburgerBtn.addEventListener('click', () => {
+      mainNav.classList.toggle('menu-open');
+      const icon = hamburgerBtn.querySelector('i');
+      if (mainNav.classList.contains('menu-open')) {
+        icon.classList.remove('ph-list');
+        icon.classList.add('ph-x');
+      } else {
+        icon.classList.remove('ph-x');
+        icon.classList.add('ph-list');
+      }
+    });
+    
+    // Close menu when clicking a link
+    const navLinks = mainNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mainNav.classList.remove('menu-open');
+        const icon = hamburgerBtn.querySelector('i');
+        icon.classList.remove('ph-x');
+        icon.classList.add('ph-list');
+      });
+    });
+  }
+
+  // Mobile Feature Card Hover Observer
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth <= 768) {
+      const featureObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-active');
+          } else {
+            entry.target.classList.remove('is-active');
+          }
+        });
+      }, { rootMargin: '-35% 0px -35% 0px' });
+      
+      document.querySelectorAll('.feature-card').forEach(card => {
+        featureObserver.observe(card);
+      });
+    }
+  });
