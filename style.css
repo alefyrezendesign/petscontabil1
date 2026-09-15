@@ -36,7 +36,7 @@ body {
   color: var(--text-dark);
   background-color: #fff;
   line-height: 1.6;
-  overflow-x: clip;
+  
 }
 
 a { text-decoration: none; color: inherit; }
@@ -1375,7 +1375,7 @@ footer {
 @media (max-width: 768px) {
   /* 1. CONTAINER E MARGENS */
   html, body {
-    overflow-x: clip;
+    
     width: 100vw;
     margin: 0;
     padding: 0;
@@ -1731,3 +1731,32 @@ footer {
 
 
 
+
+@media (max-width: 768px) {
+  #demonstracao-wrapper {
+    height: 150vh !important;
+  }
+  #demonstracao-wrapper > section {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 60px !important; /* Start slightly below header */
+    height: calc(100vh - 60px) !important;
+  }
+  #demonstracao-card {
+    height: 65vh !important;
+  }
+}
+@media (max-width: 768px) {
+  #demonstracao-card {
+    height: 75vh !important;
+    border-radius: 24px !important;
+  }
+  #demonstracao-words {
+    font-size: 26px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    left: 5% !important;
+    width: 90% !important;
+    text-align: center !important;
+  }
+}
