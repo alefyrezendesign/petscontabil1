@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
 
   // Fade Up Animation
   const observerOptions = { threshold: 0.1 };
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Mobile Menu Toggle
-document.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
   const mobileBtn = document.querySelector('.mobile-menu-btn');
   const mainNav = document.querySelector('.main-nav');
   if (mobileBtn && mainNav) {
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Mobile Feature Card Hover Observer
-  document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
     if (window.innerWidth <= 768) {
       const featureObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -658,3 +658,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.dispatchEvent(new Event('scroll'));
   }
+

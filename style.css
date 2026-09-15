@@ -1518,7 +1518,7 @@ footer {
     text-align: center !important;
     flex-direction: column !important;
     gap: 20px !important;
-    min-height: auto !important;
+    min-height: 0 !important;
   }
   
   .hero-content {
@@ -1550,7 +1550,7 @@ footer {
   .big-numbers-text { width: 100% !important; text-align: center !important; }
   .big-numbers-text h2 { font-size: 22px !important; line-height: 1.3 !important; text-align: center !important; margin-bottom: 10px !important; width: 100% !important; }
   .numbers-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; width: 100% !important; }
-  .number-card-new { padding: 20px !important; width: 100% !important; box-sizing: border-box !important; min-height: auto !important; text-align: left !important; }
+  .number-card-new { padding: 20px !important; width: 100% !important; box-sizing: border-box !important; min-height: 0 !important; text-align: left !important; }
   .number-card-new h3 { font-size: 22px !important; }
   .number-card-new p { font-size: 14px !important; line-height: 1.3 !important; }
   
@@ -1728,3 +1728,4 @@ footer {
 .word-yellow {
   color: var(--color-yellow) !important;
 }
+
