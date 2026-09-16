@@ -142,7 +142,8 @@ setTimeout(() => {
       demoImage.style.transform = `translateY(${imgY}%) scale(${imgScale})`;
       
       wordEls.forEach((el, i) => {
-        const startWord = 0.30 + (i / words.length) * 0.15;
+        const baseStart = window.innerWidth <= 768 ? 0.20 : 0.30;
+        const startWord = baseStart + (i / words.length) * 0.15;
         const endWord = startWord + 0.05;
         
         const wOpacity = mapRange(progress, startWord, endWord, 0, 1);
@@ -218,69 +219,248 @@ setTimeout(() => {
   });
 
   // IBGE City Autocomplete Logic
-  const cidadeInput = document.getElementById('custom_cidade');
-  const estadoSelect = document.getElementById('custom_estado');
-  const autocompleteList = document.getElementById('city_autocomplete_list');
+  let citiesCache = null;
+  let citiesPromise = null;
 
-  if (cidadeInput && estadoSelect && autocompleteList) {
-    let citiesCache = null;
-    let citiesPromise = null;
+  function loadCities() {
+    if (citiesCache) return Promise.resolve(citiesCache);
+    if (citiesPromise) return citiesPromise;
+    citiesPromise = fetch('https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome')
+      .then(r => r.json())
+      .then(data => {
+        citiesCache = data.map(c => {
+          const sigla = c.microrregiao?.mesorregiao?.UF?.sigla;
+          return sigla ? { name: c.nome, uf: sigla, label: `${c.nome} - ${sigla}` } : null;
+        }).filter(c => c !== null);
+        return citiesCache;
+      })
+      .catch(err => { console.error('[IBGE]', err); citiesPromise = null; return []; });
+    return citiesPromise;
+  }
 
-    function loadCities() {
-      if (citiesCache) return Promise.resolve(citiesCache);
-      if (citiesPromise) return citiesPromise;
-      citiesPromise = fetch('https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome')
-        .then(r => r.json())
-        .then(data => {
-          citiesCache = data.map(c => {
-            const sigla = c.microrregiao?.mesorregiao?.UF?.sigla;
-            return sigla ? { name: c.nome, uf: sigla, label: `${c.nome} - ${sigla}` } : null;
-          }).filter(c => c !== null);
-          return citiesCache;
-        })
-        .catch(err => { console.error('[IBGE]', err); citiesPromise = null; return []; });
-      return citiesPromise;
-    }
+  loadCities(); // Preload on init
 
-    loadCities(); // Preload on init
+  function setupCityAutocomplete(cidadeInputId, estadoSelectId, autocompleteListId) {
+    const cidadeInput = document.getElementById(cidadeInputId);
+    const estadoSelect = document.getElementById(estadoSelectId);
+    const autocompleteList = document.getElementById(autocompleteListId);
 
-    cidadeInput.addEventListener('input', (e) => {
-      const val = e.target.value;
-      autocompleteList.innerHTML = '';
-      if (!val) {
-        autocompleteList.style.display = 'none';
-        return;
-      }
-      
-      loadCities().then(cities => {
-        const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        const search = norm(val);
-        const filtered = cities.filter(c => norm(c.name).startsWith(search)).slice(0, 20);
+    if (cidadeInput && estadoSelect && autocompleteList) {
+      let currentFiltered = [];
+      let activeIndex = -1;
 
-        if (filtered.length > 0) {
-          filtered.forEach(city => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${city.name}</span> <span class="uf">- ${city.uf}</span>`;
-            li.addEventListener('click', () => {
-              cidadeInput.value = `${city.name} - ${city.uf}`;
-              estadoSelect.value = city.uf;
-              autocompleteList.style.display = 'none';
+      cidadeInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        autocompleteList.innerHTML = '';
+        activeIndex = -1;
+        if (!val) {
+          autocompleteList.style.display = 'none';
+          return;
+        }
+        
+        loadCities().then(cities => {
+          const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+          const search = norm(val);
+          currentFiltered = cities.filter(c => norm(c.name).startsWith(search) || norm(c.label).startsWith(search)).slice(0, 20);
+
+          if (currentFiltered.length > 0) {
+            currentFiltered.forEach((city, index) => {
+              const li = document.createElement('li');
+              li.innerHTML = `<span>${city.name}</span> <span class="uf">- ${city.uf}</span>`;
+              
+              // Prevent blur from hiding the list before click is registered
+              li.addEventListener('mousedown', (evt) => {
+                evt.preventDefault();
+                selectCity(city);
+              });
+              autocompleteList.appendChild(li);
             });
-            autocompleteList.appendChild(li);
-          });
-          autocompleteList.style.display = 'block';
-        } else {
+            autocompleteList.style.display = 'block';
+          } else {
+            autocompleteList.style.display = 'none';
+          }
+        });
+      });
+
+      function selectCity(city) {
+        cidadeInput.value = city.label;
+        estadoSelect.value = city.uf;
+        estadoSelect.dispatchEvent(new Event('change'));
+        autocompleteList.style.display = 'none';
+        currentFiltered = [];
+        activeIndex = -1;
+      }
+
+      cidadeInput.addEventListener('keydown', (e) => {
+        const items = autocompleteList.querySelectorAll('li');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (activeIndex < items.length - 1) {
+            activeIndex++;
+            updateActiveItem(items);
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (activeIndex > 0) {
+            activeIndex--;
+            updateActiveItem(items);
+          }
+        } else if (e.key === 'Enter' || e.key === 'Tab') {
+          if (autocompleteList.style.display === 'block') {
+            if (activeIndex > -1 && currentFiltered[activeIndex]) {
+              if (e.key === 'Enter') e.preventDefault();
+              selectCity(currentFiltered[activeIndex]);
+            } else if (currentFiltered.length > 0) {
+              selectCity(currentFiltered[0]);
+            }
+          }
+        }
+      });
+
+      function updateActiveItem(items) {
+        items.forEach((item, index) => {
+          if (index === activeIndex) {
+            item.classList.add('active-item');
+          } else {
+            item.classList.remove('active-item');
+          }
+        });
+        if (activeIndex > -1 && items[activeIndex]) {
+          items[activeIndex].scrollIntoView({ block: 'nearest' });
+        }
+      }
+
+      cidadeInput.addEventListener('blur', () => {
+        setTimeout(() => {
+          if (autocompleteList.style.display === 'block') {
+            const val = cidadeInput.value;
+            const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+            const search = norm(val);
+            const exactMatch = currentFiltered.find(c => norm(c.name) === search || norm(c.label) === search);
+            
+            if (exactMatch) {
+              selectCity(exactMatch);
+            } else if (currentFiltered.length > 0) {
+              selectCity(currentFiltered[0]);
+            } else {
+              autocompleteList.style.display = 'none';
+            }
+          }
+        }, 150);
+      });
+      
+      document.addEventListener('mousedown', (e) => {
+        if (e.target !== cidadeInput && !autocompleteList.contains(e.target)) {
           autocompleteList.style.display = 'none';
         }
       });
-    });
+    }
+  }
 
+  setupCityAutocomplete('custom_cidade', 'custom_estado', 'city_autocomplete_list');
+  setupCityAutocomplete('modal_cidade', 'modal_estado', 'modal_city_autocomplete_list');
+
+  // Custom Select Logic Setup
+  function setupCustomSelects() {
+    const selects = document.querySelectorAll('select');
+    
+    selects.forEach(select => {
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'custom-select-wrapper';
+      
+      // Insert wrapper before select
+      select.parentNode.insertBefore(wrapper, select);
+      // Move select into wrapper
+      wrapper.appendChild(select);
+      select.classList.add('hidden-native-select');
+      
+      // Create trigger
+      const trigger = document.createElement('div');
+      trigger.className = 'custom-select-trigger';
+      
+      const triggerText = document.createElement('span');
+      // Set initial text to selected option or first option
+      const selectedOption = select.options[select.selectedIndex];
+      triggerText.textContent = selectedOption ? selectedOption.textContent : 'Selecione';
+      
+      const icon = document.createElement('i');
+      icon.className = 'ph-bold ph-caret-down';
+      
+      trigger.appendChild(triggerText);
+      trigger.appendChild(icon);
+      wrapper.appendChild(trigger);
+      
+      // Create options container
+      const optionsContainer = document.createElement('ul');
+      optionsContainer.className = 'custom-options';
+      
+      Array.from(select.options).forEach((option, index) => {
+        if (option.disabled && !option.value) return; // Skip disabled placeholders if empty
+        
+        const li = document.createElement('li');
+        li.className = 'custom-option';
+        li.textContent = option.textContent;
+        li.dataset.value = option.value;
+        
+        if (index === select.selectedIndex) {
+          li.classList.add('selected');
+        }
+        
+        li.addEventListener('click', (e) => {
+          e.stopPropagation();
+          // Update native select
+          select.value = option.value;
+          // Trigger change event for RD Station ghost form hook and others
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+          
+          // Update trigger text
+          triggerText.textContent = option.textContent;
+          
+          // Update selected class
+          optionsContainer.querySelectorAll('.custom-option').forEach(el => el.classList.remove('selected'));
+          li.classList.add('selected');
+          
+          // Close dropdown
+          wrapper.classList.remove('open');
+        });
+        
+        optionsContainer.appendChild(li);
+      });
+      
+      wrapper.appendChild(optionsContainer);
+      
+      // Toggle dropdown
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+          if (w !== wrapper) w.classList.remove('open');
+        });
+        wrapper.classList.toggle('open');
+      });
+      
+      // Update when native select changes programmatically
+      select.addEventListener('change', () => {
+        const newlySelected = select.options[select.selectedIndex];
+        if (newlySelected) {
+          triggerText.textContent = newlySelected.textContent;
+          optionsContainer.querySelectorAll('.custom-option').forEach(el => {
+            if (el.dataset.value === newlySelected.value) el.classList.add('selected');
+            else el.classList.remove('selected');
+          });
+        }
+      });
+    });
+    
+    // Close when clicking outside
     document.addEventListener('click', (e) => {
-      if (e.target !== cidadeInput && e.target !== autocompleteList) {
-        autocompleteList.style.display = 'none';
+      if (!e.target.closest('.custom-select-wrapper')) {
+        document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
       }
     });
   }
+
+  setupCustomSelects();
 
   // Form Steps Logic Setup
   function setupFormSteps(prefix) {
