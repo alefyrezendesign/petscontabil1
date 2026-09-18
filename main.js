@@ -57,28 +57,35 @@ setTimeout(() => {
     }
 
     const chars = revealText.querySelectorAll('.reveal-char');
+    let isRevealing = false;
     window.addEventListener('scroll', () => {
-      const rect = revealText.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      const elementCenter = rect.top + rect.height / 2;
-      const viewportCenter = windowHeight / 2;
-      
-      const startY = windowHeight;
-      const endY = viewportCenter;
-      
-      let progress = (startY - elementCenter) / (startY - endY);
-      progress = Math.max(0, Math.min(1, progress));
-      
-      chars.forEach((char, index) => {
-        const charPercent = index / chars.length;
-        if (progress > charPercent) {
-          char.style.color = '#FFFFFF';
-        } else {
-          char.style.color = 'rgba(255, 255, 255, 0.2)';
-        }
-      });
-    });
+      if (!isRevealing) {
+        window.requestAnimationFrame(() => {
+          const rect = revealText.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          const elementCenter = rect.top + rect.height / 2;
+          const viewportCenter = windowHeight / 2;
+          
+          const startY = windowHeight;
+          const endY = viewportCenter;
+          
+          let progress = (startY - elementCenter) / (startY - endY);
+          progress = Math.max(0, Math.min(1, progress));
+          
+          chars.forEach((char, index) => {
+            const charPercent = index / chars.length;
+            if (progress > charPercent) {
+              char.style.color = '#FFFFFF';
+            } else {
+              char.style.color = 'rgba(255, 255, 255, 0.2)';
+            }
+          });
+          isRevealing = false;
+        });
+        isRevealing = true;
+      }
+    }, { passive: true });
     // Trigger once on load
     window.dispatchEvent(new Event('scroll'));
   }
@@ -114,45 +121,52 @@ setTimeout(() => {
     const demoCard = document.getElementById('demonstracao-card');
     const demoImage = document.getElementById('demonstracao-image-wrapper');
     
+    let isDemoScrolling = false;
     window.addEventListener('scroll', () => {
-      const rect = demoWrapper.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      const totalDist = rect.height + windowHeight;
-      let progress = (windowHeight - rect.top) / totalDist;
-      progress = Math.max(0, Math.min(1, progress));
-      
-      const mapRange = (value, inMin, inMax, outMin, outMax) => {
-        if (value <= inMin) return outMin;
-        if (value >= inMax) return outMax;
-        return outMin + (outMax - outMin) * ((value - inMin) / (inMax - inMin));
-      };
-      
-      const scale = mapRange(progress, 0.05, 0.28, 0.75, 1);
-      const radius = mapRange(progress, 0.05, 0.28, 48, 24);
-      const opacity = mapRange(progress, 0.05, 0.15, 0, 1);
-      
-      demoCard.style.transform = `scale(${scale})`;
-      demoCard.style.borderRadius = `${radius}px`;
-      demoCard.style.opacity = opacity;
-      
-      const imgY = mapRange(progress, 0, 1, 0, 10);
-      const imgScale = mapRange(progress, 0, 1, 1, 1.05);
-      
-      demoImage.style.transform = `translateY(${imgY}%) scale(${imgScale})`;
-      
-      wordEls.forEach((el, i) => {
-        const baseStart = window.innerWidth <= 768 ? 0.20 : 0.30;
-        const startWord = baseStart + (i / words.length) * 0.15;
-        const endWord = startWord + 0.05;
-        
-        const wOpacity = mapRange(progress, startWord, endWord, 0, 1);
-        const wY = mapRange(progress, startWord, endWord, 30, 0);
-        
-        el.style.opacity = wOpacity;
-        el.style.transform = `translateY(${wY}px)`;
-      });
-    });
+      if (!isDemoScrolling) {
+        window.requestAnimationFrame(() => {
+          const rect = demoWrapper.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          const totalDist = rect.height + windowHeight;
+          let progress = (windowHeight - rect.top) / totalDist;
+          progress = Math.max(0, Math.min(1, progress));
+          
+          const mapRange = (value, inMin, inMax, outMin, outMax) => {
+            if (value <= inMin) return outMin;
+            if (value >= inMax) return outMax;
+            return outMin + (outMax - outMin) * ((value - inMin) / (inMax - inMin));
+          };
+          
+          const scale = mapRange(progress, 0.05, 0.28, 0.75, 1);
+          const radius = mapRange(progress, 0.05, 0.28, 48, 24);
+          const opacity = mapRange(progress, 0.05, 0.15, 0, 1);
+          
+          demoCard.style.transform = `scale(${scale})`;
+          demoCard.style.borderRadius = `${radius}px`;
+          demoCard.style.opacity = opacity;
+          
+          const imgY = mapRange(progress, 0, 1, 0, 10);
+          const imgScale = mapRange(progress, 0, 1, 1, 1.05);
+          
+          demoImage.style.transform = `translateY(${imgY}%) scale(${imgScale})`;
+          
+          wordEls.forEach((el, i) => {
+            const baseStart = window.innerWidth <= 768 ? 0.20 : 0.30;
+            const startWord = baseStart + (i / words.length) * 0.15;
+            const endWord = startWord + 0.05;
+            
+            const wOpacity = mapRange(progress, startWord, endWord, 0, 1);
+            const wY = mapRange(progress, startWord, endWord, 30, 0);
+            
+            el.style.opacity = wOpacity;
+            el.style.transform = `translateY(${wY}px)`;
+          });
+          isDemoScrolling = false;
+        });
+        isDemoScrolling = true;
+      }
+    }, { passive: true });
     
     window.dispatchEvent(new Event('scroll'));
   }
@@ -163,30 +177,37 @@ setTimeout(() => {
   if (timeline && progressLine) {
     const nodes = timeline.querySelectorAll('.tracking-node');
     
+    let isTimelineScrolling = false;
     window.addEventListener('scroll', () => {
-      const rect = timeline.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      // Start filling when the timeline is 80% down the screen
-      // Finish filling when the timeline is 40% down the screen
-      const start = windowHeight * 0.8;
-      const end = windowHeight * 0.4;
-      
-      let progress = (start - rect.top) / (start - end);
-      progress = Math.max(0, Math.min(1, progress)); // clamp between 0 and 1
-      
-      progressLine.style.width = (progress * 75) + '%';
-      
-      nodes.forEach((node, index) => {
-        // Node 1 triggers immediately (>0), Node 2 at >33%, etc.
-        const threshold = index / (nodes.length - 1);
-        if (progress >= threshold - 0.05) {
-          node.classList.add('node-active');
-        } else {
-          node.classList.remove('node-active');
-        }
-      });
-    });
+      if (!isTimelineScrolling) {
+        window.requestAnimationFrame(() => {
+          const rect = timeline.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Start filling when the timeline is 80% down the screen
+          // Finish filling when the timeline is 40% down the screen
+          const start = windowHeight * 0.8;
+          const end = windowHeight * 0.4;
+          
+          let progress = (start - rect.top) / (start - end);
+          progress = Math.max(0, Math.min(1, progress)); // clamp between 0 and 1
+          
+          progressLine.style.width = (progress * 75) + '%';
+          
+          nodes.forEach((node, index) => {
+            // Node 1 triggers immediately (>0), Node 2 at >33%, etc.
+            const threshold = index / (nodes.length - 1);
+            if (progress >= threshold - 0.05) {
+              node.classList.add('node-active');
+            } else {
+              node.classList.remove('node-active');
+            }
+          });
+          isTimelineScrolling = false;
+        });
+        isTimelineScrolling = true;
+      }
+    }, { passive: true });
     
     // Trigger once on load in case it's already in view
     window.dispatchEvent(new Event('scroll'));
@@ -261,7 +282,19 @@ setTimeout(() => {
     return citiesPromise;
   }
 
-  loadCities(); // Preload on init
+  // Preload alterado para Lazy Load via IntersectionObserver
+  const formSection = document.getElementById('diagnostico');
+  if (formSection) {
+    const ibgeObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadCities();
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '500px' });
+    ibgeObserver.observe(formSection);
+  }
 
   function setupCityAutocomplete(cidadeInputId, estadoSelectId, autocompleteListId) {
     const cidadeInput = document.getElementById(cidadeInputId);

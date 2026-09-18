@@ -109,7 +109,7 @@ header {
 }
 .main-nav > ul > li { position: relative; }
 .main-nav > ul > li > a { 
-  font-weight: 700; font-size: 0.95rem; color: #64748B; 
+  font-weight: 700; font-size: 0.95rem; color: #475569; 
   padding: 0.6rem 1.2rem;
   border-radius: 50px;
   display: flex; align-items: center; gap: 5px;
@@ -170,14 +170,14 @@ header {
 .badge-yellow {
   display: inline-flex; align-items: center; gap: 8px;
   background-color: #FDF1DA; /* Light pale orange/yellow */
-  color: #D98A00; /* Dourado/Laranja claro */
+  color: #B27100; /* Dourado/Laranja escurecido para contraste */
   padding: 0.4rem 1.2rem;
   border-radius: 50px;
   font-size: 0.85rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
 }
-.badge-yellow i { font-size: 1rem; color: #D98A00; }
+.badge-yellow i { font-size: 1rem; color: #B27100; }
 .badge-purple-faded {
   display: inline-flex; align-items: center; gap: 8px;
   background-color: rgba(76, 38, 149, 0.1);
