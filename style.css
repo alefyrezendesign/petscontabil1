@@ -1271,8 +1271,11 @@ footer {
 .footer-desc {
   font-size: 1.1rem; color: #D1C4E9; line-height: 1.5; margin-bottom: 2rem; max-width: 350px;
 }
-.footer-contact p {
-  color: white; font-weight: 600; display: flex; align-items: center; gap: 10px; margin-bottom: 0.8rem; font-size: 1.05rem;
+.footer-contact p, .footer-contact .footer-phone-link {
+  color: white; font-weight: 600; display: flex; align-items: center; gap: 10px; margin-bottom: 0.8rem; font-size: 1.05rem; text-decoration: none; transition: color 0.3s ease;
+}
+.footer-contact .footer-phone-link:hover {
+  color: var(--color-yellow);
 }
 .footer-contact i {
   color: var(--color-yellow); font-size: 1.3rem;
@@ -1739,12 +1742,22 @@ footer {
   .faq-section h2 { font-size: 26px !important; }
 
   /* 12. FOOTER */
-  footer { padding: 60px 20px 30px !important; }
-  .footer-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-  .footer-brand { align-items: flex-start !important; }
-  .footer-logo { width: 150px !important; }
-  .footer-desc { max-width: 100% !important; }
-  .footer-contact p, .footer-location p { align-items: flex-start !important; }
+  footer { padding: 50px 20px 30px !important; box-sizing: border-box !important; overflow: hidden !important; width: 100% !important; }
+  .footer-grid { grid-template-columns: 1fr !important; gap: 35px !important; max-width: 100% !important; }
+  .footer-brand { align-items: flex-start !important; max-width: 100% !important; }
+  .footer-logo { width: 160px !important; margin-bottom: 1rem !important; }
+  .footer-desc { max-width: 100% !important; font-size: 1rem !important; margin-bottom: 1.5rem !important; }
+  .footer-contact p, .footer-location p, .footer-contact .footer-phone-link { 
+    align-items: flex-start !important; 
+    word-break: break-word !important; 
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+  }
+  .footer-contact p i, .footer-location p i, .footer-contact .footer-phone-link i {
+    flex-shrink: 0 !important; /* impede que o ícone amasse */
+    margin-top: 3px !important;
+  }
+  .footer-bottom { font-size: 0.85rem !important; padding: 20px 10px 0 !important; line-height: 1.5 !important; }
   
   #demonstracao-words { font-size: 22px !important; }
 }

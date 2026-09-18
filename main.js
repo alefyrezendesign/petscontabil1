@@ -218,6 +218,29 @@ setTimeout(() => {
     });
   });
 
+  // Accordion Auto-Expand Observer
+  const accordionContainer = document.querySelector('.conceito-accordion');
+  if (accordionContainer) {
+    const firstAccItem = accordionContainer.querySelector('.acc-item');
+    if (firstAccItem) {
+      const accObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Só expande se nenhum estiver aberto, com um pequeno atraso
+            setTimeout(() => {
+              const hasActive = accordionContainer.querySelector('.acc-item.active');
+              if (!hasActive) {
+                firstAccItem.classList.add('active');
+              }
+            }, 600); // 600ms de atraso
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.6 }); // Alterado de 0.3 para 0.6
+      accObserver.observe(accordionContainer);
+    }
+  }
+
   // IBGE City Autocomplete Logic
   let citiesCache = null;
   let citiesPromise = null;
@@ -643,7 +666,7 @@ setTimeout(() => {
   }
 
   setupGhostForm('custom_', 'custom-diagnostico-form', 'rd-ghost-container', 'custom_submit_btn', 'form-feedback');
-  setupGhostForm('modal_', 'modal-diagnostico-form', 'modal-rd-ghost-container', 'modal_submit_btn', 'modal-form-feedback');
+  setupGhostForm('modal_', 'modal-diagnostico-form', 'rd-ghost-container', 'modal_submit_btn', 'modal-form-feedback');
 
   // Intersection Observer for Scroll Animations
   const revealObserverOptions = {
