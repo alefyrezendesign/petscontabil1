@@ -4,22 +4,33 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Termos de Uso - Pets Contábil</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/poppins/poppins-400-latin.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/poppins/poppins-700-latin.woff2" crossorigin>
+  
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="stylesheet" href="/style.css">
   <style>
-    .legal-content { max-width: 800px; margin: 100px auto; padding: 2rem; }
-    .legal-content h1 { color: var(--purple-700); margin-bottom: 2rem; }
-    .legal-content h2 { color: var(--purple-600); margin-top: 2rem; margin-bottom: 1rem; }
-    .legal-content p { margin-bottom: 1rem; line-height: 1.6; color: var(--text-light); }
+    .legal-content { max-width: 800px; margin: 150px auto 100px; padding: 2rem 5%; background: white; border-radius: 12px; }
+    .legal-content h1 { color: var(--color-purple-dark); margin-bottom: 2rem; font-size: 2.5rem; text-align: center; }
+    .legal-content h2 { color: var(--color-purple); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem; }
+    .legal-content p { margin-bottom: 1rem; line-height: 1.6; color: var(--color-text); font-size: 1rem; }
+    .legal-content ul { margin-bottom: 1rem; padding-left: 20px; color: var(--color-text); line-height: 1.6; }
+    .legal-content li { margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
-  <header id="header" style="background: var(--surface);">
-    <div class="logo"><a href="/"><img src="/logo-clara.png" alt="Logo Pets Contábil" width="165" height="55"></a></div>
+
+  <!-- Header -->
+  <header id="header" class="scrolled" style="background-color: white; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); position: fixed; top: 0; width: 100%; z-index: 1000; padding: 0.5rem 5%; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+    <div class="logo">
+      <a href="/"><img src="/logo-escura.webp" alt="Logo Pets Contábil" width="165" height="55"></a>
+    </div>
+    <a href="/" class="btn btn-purple btn-header" style="display: flex; align-items: center; font-weight: 600;"><i class="ph-bold ph-arrow-left" style="margin-right: 8px;"></i> Voltar ao site</a>
   </header>
+
   <main class="legal-content">
+
     <h1>Termos de Uso</h1>
     <p>Ao acessar e utilizar o site da Pets Contábil, você concorda com os seguintes termos e condições:</p>
     <h2>1. Uso do Site</h2>
@@ -30,17 +41,46 @@
     <p>Todos os textos, imagens, logotipos e materiais presentes neste site são de propriedade da Pets Contábil e estão protegidos por leis de direitos autorais.</p>
     <h2>4. Alterações nos Termos</h2>
     <p>A Pets Contábil reserva-se o direito de modificar estes Termos de Uso a qualquer momento, sem aviso prévio. Recomendamos a revisão periódica desta página.</p>
+  
   </main>
+
+  <!-- FOOTER -->
   <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="/logo-clara.webp" alt="Logo Pets Contábil Rodapé" class="footer-logo" loading="lazy" decoding="async" width="165" height="55">
+        <p class="footer-desc">Dados, Gestão e Tributação<br>para o Mercado Pet & Vet.</p>
+        <div class="footer-contact">
+          <a href="https://api.whatsapp.com/send/?phone=551130140190&text=Ol%C3%A1%2C+vim+pelo+site%2C+gostaria+de+falar+com+um+especialista&type=phone_number&app_absent=0" target="_blank" class="footer-phone-link"><i class="ph-fill ph-whatsapp-logo"></i> (11) 3014-0190</a>
+          <p><i class="ph-fill ph-envelope-simple"></i> atendimento@petscontabil.com.br</p>
+        </div>
+      </div>
+      <div class="footer-nav-col">
+        <h3>Navegação</h3>
+        <ul class="footer-links">
+          <li><a href="/">Início</a></li>
+        </ul>
+      </div>
+      <div class="footer-location">
+        <h3>Localização</h3>
+        <p><i class="ph-fill ph-map-pin"></i> Av. Paulista, 1636, Conj. 4, 15° Andar<br>Bela Vista, São Paulo - SP<br>CEP 01310-200</p>
+        <div class="desktop-only">
+          <a href="https://www.instagram.com/petscontabil_/" target="_blank" aria-label="Instagram" style="color: white;"><i class="ph-fill ph-instagram-logo"></i></a>
+          <a href="https://www.facebook.com/petscontabil" target="_blank" aria-label="Facebook" style="color: white;"><i class="ph-fill ph-facebook-logo"></i></a>
+          <a href="https://www.linkedin.com/company/pets-cont%C3%A1bil/about/" target="_blank" aria-label="LinkedIn" style="color: white;"><i class="ph-fill ph-linkedin-logo"></i></a>
+        </div>
+      </div>
+    </div>
     <div class="footer-bottom">
-      <nav aria-label="Páginas legais" style="margin-bottom: 1rem;">
-        <a href="/" style="color: white; margin-right: 15px;">Início</a>
-        <a href="/politica-de-privacidade.html" style="color: white; margin-right: 15px;">Privacidade</a>
-        <a href="/politica-de-cookies.html" style="color: white; margin-right: 15px;">Cookies</a>
+      <div class="footer-legal-links" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+        <a href="/" style="color: white;">Início</a>
+        <a href="/politica-de-privacidade.html" style="color: white;">Privacidade</a>
+        <a href="/politica-de-cookies.html" style="color: white;">Cookies</a>
         <a href="/termos-de-uso.html" style="color: white;">Termos de Uso</a>
-      </nav>
+      </div>
       Copyright © 2026 Pets Contábil - CNPJ: 57.750.860/0001-60 | Todos os direitos reservados.
     </div>
   </footer>
+
 </body>
 </html>
