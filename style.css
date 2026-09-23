@@ -164,6 +164,11 @@
   margin: 0; padding: 0; box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   font-family: var(--font-main);
   color: var(--text-dark);
@@ -1299,13 +1304,14 @@ header {
 .hidden-native-select {
   position: absolute;
   opacity: 0;
-  width: 1px;
-  height: 1px;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
   border: none;
-  padding: 0;
+  padding: 0 !important;
   margin: 0;
-  bottom: 0;
-  left: 50%;
+  inset: 0 auto auto 0;
+  overflow: hidden;
   pointer-events: none;
 }
 .custom-select-trigger {

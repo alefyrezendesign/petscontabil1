@@ -75,6 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Demonstracao Scroll Animation
   const demoWrapper = document.getElementById('demonstracao-wrapper');
   if (demoWrapper) {
+    let demoInitialized = false;
+    const initializeDemo = () => {
+      if (demoInitialized) return;
+      demoInitialized = true;
+
     const wordsContainer = document.getElementById('demonstracao-words');
     const phrase = "Por trás de cada clínica ou pet shop que cresce, existe uma estratégia e gestão que começou aqui.";
     const words = phrase.split(' ');
@@ -153,6 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     
     window.dispatchEvent(new Event('scroll'));
+    };
+
+    const demoInitObserver = new IntersectionObserver((entries, observer) => {
+      if (!entries[0].isIntersecting) return;
+      initializeDemo();
+      observer.disconnect();
+    }, { rootMargin: '1200px 0px' });
+    demoInitObserver.observe(demoWrapper);
   }
 
   // Horizontal Animated Timeline Observer - Scroll Scrubbing
@@ -783,36 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Mobile Menu Toggle
-document.addEventListener('DOMContentLoaded', () => {
-  const mobileBtn = document.querySelector('.mobile-menu-btn');
-  const mainNav = document.querySelector('.main-nav');
-  if (mobileBtn && mainNav) {
-    mobileBtn.addEventListener('click', () => {
-      mainNav.classList.toggle('menu-open');
-      const icon = mobileBtn.querySelector('i');
-      if (mainNav.classList.contains('menu-open')) {
-        icon.classList.remove('ph-list');
-        icon.classList.add('ph-x');
-      } else {
-        icon.classList.remove('ph-x');
-        icon.classList.add('ph-list');
-      }
-    });
-    
-    // Close menu when clicking a link
-    mainNav.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mainNav.classList.remove('menu-open');
-        const icon = mobileBtn.querySelector('i');
-        icon.classList.remove('ph-x');
-        icon.classList.add('ph-list');
-      });
-    });
-  }
-});
-  
-  // Mobile Hamburger Menu Logic
+// Mobile Hamburger Menu Logic
   const hamburgerBtn = document.querySelector('.hamburger-btn');
   const mainNav = document.querySelector('.main-nav');
   
