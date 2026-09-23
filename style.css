@@ -1,4 +1,43 @@
+/* Poppins 24, hosted locally to remove the render-blocking third-party font request. */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/poppins/poppins-400-latin.woff2") format("woff2");
+}
 
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/poppins/poppins-500-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/poppins/poppins-600-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/poppins/poppins-700-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/poppins/poppins-800-latin.woff2") format("woff2");
+}
 
 /* Phosphor Icons 2.1.2: official glyphs, subset to the icons used by this page. */
 @font-face {
@@ -1576,30 +1615,29 @@ footer {
 .typewriter span {
   position: relative;
 }
-.typewriter.typing-active > span:not(.typewriter-reserved)::after,
-.hero-typewriter.typing-active .typewriter-live::after {
+.typewriter.typing-active .typewriter-live::after {
   content: "|";
   position: absolute;
   right: -8px;
   animation: blink 0.7s infinite;
 }
 
-.hero-typewriter .typewriter-reserved {
+.typewriter .typewriter-reserved {
   display: grid;
   min-width: 0;
 }
 
-.hero-typewriter .typewriter-measure,
-.hero-typewriter .typewriter-live {
+.typewriter .typewriter-measure,
+.typewriter .typewriter-live {
   grid-area: 1 / 1;
 }
 
-.hero-typewriter .typewriter-measure {
+.typewriter .typewriter-measure {
   visibility: hidden;
   pointer-events: none;
 }
 
-.hero-typewriter .typewriter-live {
+.typewriter .typewriter-live {
   position: relative;
 }
 @keyframes blink {

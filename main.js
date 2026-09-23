@@ -707,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (entry.isIntersecting) {
         const el = entry.target;
         const textToType = el.getAttribute("data-text");
-        const span = el.querySelector(".typewriter-live") || el.querySelector("span");
+        const span = el.querySelector(".typewriter-live");
         if (textToType && span) {
           span.textContent = "";
           el.classList.add("typing-active");
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.5 });
 
   document.querySelectorAll(".typewriter").forEach(el => {
-    const span = el.querySelector(".typewriter-live") || el.querySelector("span");
+    const span = el.querySelector(".typewriter-live");
     if(span) span.textContent = ""; // clear initial text
     typeObserver.observe(el);
   });
