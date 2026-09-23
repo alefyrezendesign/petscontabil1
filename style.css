@@ -316,6 +316,17 @@ header {
   margin-bottom: 1.5rem;
 }
 .badge-yellow i { font-size: 1rem; color: #B27100; }
+
+/* TEMPORÁRIO: marcador visual para confirmar o deploy mais recente. */
+.hero-typewriter {
+  background-color: #DC2626;
+  color: #FFFFFF;
+}
+
+.hero-typewriter i {
+  color: #FFFFFF;
+}
+
 .badge-purple-faded {
   display: inline-flex; align-items: center; gap: 8px;
   background-color: rgba(76, 38, 149, 0.1);
