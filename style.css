@@ -1490,6 +1490,9 @@ footer {
   50% { opacity: 0; }
 }
 
+/* --- VISIBILITY HELPERS --- */
+.mobile-only { display: none !important; }
+.desktop-only { display: flex !important; gap: 15px; margin-top: 15px; font-size: 1.5rem; }
 
 /* --- MOBILE OVERHAUL --- */
 @media (max-width: 768px) {
@@ -1742,6 +1745,8 @@ footer {
   .faq-section h2 { font-size: 26px !important; }
 
   /* 12. FOOTER */
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; margin-top: 15px; gap: 15px; font-size: 1.5rem; }
   footer { padding: 50px 20px 30px !important; box-sizing: border-box !important; overflow: hidden !important; width: 100% !important; }
   .footer-grid { grid-template-columns: 1fr !important; gap: 35px !important; max-width: 100% !important; }
   .footer-nav-col { display: none !important; }
