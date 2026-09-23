@@ -838,52 +838,94 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Text Reveal on Scroll Animation (Optimized)
+    // Text Reveal on Scroll Animation
     const revealText = document.getElementById('reveal-text');
     if (revealText) {
-      const text = revealText.innerText;
-      revealText.innerHTML = '';
-      for (let i = 0; i < text.length; i++) {
-        const span = document.createElement('span');
-        span.textContent = text[i];
-        span.classList.add('reveal-char');
-        revealText.appendChild(span);
+      const text = revealText.textContent;
+      const textNode = revealText.firstChild;
+      const supportsCustomHighlights = Boolean(
+        textNode &&
+        textNode.nodeType === Node.TEXT_NODE &&
+        typeof CSS !== 'undefined' &&
+        CSS.highlights &&
+        typeof Highlight === 'function'
+      );
+
+      let updateRevealedCharacters;
+      let highlightName = null;
+
+      if (supportsCustomHighlights) {
+        const revealRange = document.createRange();
+        revealRange.setStart(textNode, 0);
+        revealRange.setEnd(textNode, 0);
+        highlightName = 'reveal-text-progress';
+        CSS.highlights.set(highlightName, new Highlight(revealRange));
+
+        updateRevealedCharacters = (count) => {
+          if (revealRange.endOffset !== count) {
+            revealRange.setEnd(textNode, count);
+          }
+        };
+      } else {
+        // Exact visual fallback for browsers without the Custom Highlight API.
+        const fragment = document.createDocumentFragment();
+        for (const character of text) {
+          const span = document.createElement('span');
+          span.textContent = character;
+          span.classList.add('reveal-char');
+          fragment.appendChild(span);
+        }
+        revealText.replaceChildren(fragment);
+
+        const chars = Array.from(revealText.querySelectorAll('.reveal-char'));
+        updateRevealedCharacters = (count) => {
+          chars.forEach((char, index) => {
+            char.classList.toggle('word-yellow', index < count);
+          });
+        };
       }
 
-      const chars = revealText.querySelectorAll('.reveal-char');
-      let isRevealScrolling = false;
+      let revealFrame = null;
       let revealInView = false;
-      const revealIo = new IntersectionObserver(e => revealInView = e[0].isIntersecting, {rootMargin: '100%'});
+      const revealIo = new IntersectionObserver((entries) => {
+        revealInView = entries[0].isIntersecting;
+      }, { rootMargin: '100%' });
       revealIo.observe(revealText);
 
-      window.addEventListener('scroll', () => {
-        if (!revealInView) return;
-        if (!isRevealScrolling) {
-          window.requestAnimationFrame(() => {
-            const rect = revealText.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            
-            const elementCenter = rect.top + rect.height / 2;
-            const viewportCenter = windowHeight / 2;
-            const startY = windowHeight;
-            
-            let progress = (startY - elementCenter) / (startY - viewportCenter);
-            progress = Math.max(0, Math.min(1, progress));
-            
-            chars.forEach((char, index) => {
-              const charThreshold = index / chars.length;
-              if (progress > charThreshold * 0.8) { 
-                char.classList.add('word-yellow');
-              } else {
-                char.classList.remove('word-yellow');
-              }
-            });
-            isRevealScrolling = false;
-          });
-          isRevealScrolling = true;
-        }
-      }, { passive: true });
+      const updateReveal = () => {
+        revealFrame = null;
+
+        // Read layout first, then perform the single visual update below.
+        const rect = revealText.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const elementCenter = rect.top + rect.height / 2;
+        const viewportCenter = windowHeight / 2;
+        const startY = windowHeight;
+
+        let progress = (startY - elementCenter) / (startY - viewportCenter);
+        progress = Math.max(0, Math.min(1, progress));
+        const revealedCharacters = Math.min(
+          text.length,
+          Math.ceil((progress * text.length) / 0.8)
+        );
+
+        updateRevealedCharacters(revealedCharacters);
+      };
+
+      const requestRevealUpdate = () => {
+        if (!revealInView || revealFrame !== null) return;
+        revealFrame = window.requestAnimationFrame(updateReveal);
+      };
+
+      window.addEventListener('scroll', requestRevealUpdate, { passive: true });
       
+      window.addEventListener('pagehide', () => {
+        window.removeEventListener('scroll', requestRevealUpdate);
+        revealIo.disconnect();
+        if (revealFrame !== null) window.cancelAnimationFrame(revealFrame);
+        if (highlightName) CSS.highlights.delete(highlightName);
+      }, { once: true });
+
       window.dispatchEvent(new Event('scroll'));
     }
 
@@ -914,4 +956,3 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
-

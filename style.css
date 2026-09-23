@@ -394,12 +394,15 @@ header {
   text-align: left;
 }
 .big-numbers-text h2 { 
-  color: white; 
+  color: rgba(255, 255, 255, 0.2);
   margin-bottom: 0; 
   font-size: 2rem;
   font-weight: 500;
   line-height: 1.3;
   text-align: left;
+}
+::highlight(reveal-text-progress) {
+  color: var(--color-yellow);
 }
 .reveal-char {
   transition: color 0.1s ease;
