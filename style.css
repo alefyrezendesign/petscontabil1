@@ -1623,8 +1623,9 @@ footer {
 }
 .typewriter.typing-active .typewriter-live::after {
   content: "|";
-  position: absolute;
-  right: -8px;
+  display: inline-block;
+  margin-left: 0.08em;
+  line-height: 1;
   animation: blink 0.7s infinite;
 }
 
