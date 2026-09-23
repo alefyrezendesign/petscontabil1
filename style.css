@@ -1744,6 +1744,7 @@ footer {
   /* 12. FOOTER */
   footer { padding: 50px 20px 30px !important; box-sizing: border-box !important; overflow: hidden !important; width: 100% !important; }
   .footer-grid { grid-template-columns: 1fr !important; gap: 35px !important; max-width: 100% !important; }
+  .footer-nav-col { display: none !important; }
   .footer-brand { align-items: flex-start !important; max-width: 100% !important; }
   .footer-logo { width: 160px !important; margin-bottom: 1rem !important; }
   .footer-desc { max-width: 100% !important; font-size: 1rem !important; margin-bottom: 1.5rem !important; }
