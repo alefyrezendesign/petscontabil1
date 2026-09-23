@@ -316,17 +316,6 @@ header {
   margin-bottom: 1.5rem;
 }
 .badge-yellow i { font-size: 1rem; color: #B27100; }
-
-/* TEMPORÁRIO: marcador visual para confirmar o deploy mais recente. */
-.hero-typewriter {
-  background-color: #DC2626;
-  color: #FFFFFF;
-}
-
-.hero-typewriter i {
-  color: #FFFFFF;
-}
-
 .badge-purple-faded {
   display: inline-flex; align-items: center; gap: 8px;
   background-color: rgba(76, 38, 149, 0.1);
@@ -591,12 +580,12 @@ header {
   background: var(--color-orange);
   color: white;
 }
-.bento-orange h4, .bento-white h4 {
+.bento-orange h3, .bento-white h3 {
   margin-top: auto;
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
-.bento-orange h4 { color: white; }
+.bento-orange h3 { color: white; }
 .bento-orange p, .bento-white p {
   font-size: 0.85rem; margin-bottom: 0; line-height: 1.4;
 }
@@ -1170,7 +1159,7 @@ header {
   padding: 6rem var(--container);
   color: #fff;
 }
-.diagnostico-info h2, .diagnostico-info p, .diagnostico-info h4 {
+.diagnostico-info h2, .diagnostico-info p, .diagnostico-info h3 {
   color: #fff;
 }
 .tracking-timeline {
@@ -1233,7 +1222,7 @@ header {
   box-shadow: 0 0 15px rgba(255,178,0,0.4);
 }
 
-.node-content h4 {
+.node-content h3 {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
 }
@@ -1433,7 +1422,7 @@ footer {
 .footer-contact i {
   color: var(--color-yellow); font-size: 1.3rem;
 }
-.footer-grid h4 { color: white; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; }
+.footer-grid h3 { color: white; margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; }
 .footer-links { list-style: none; padding: 0; }
 .footer-links li { margin-bottom: 0.8rem; }
 .footer-links a { color: #D1C4E9; text-decoration: none; transition: all 0.3s ease; display: inline-block; }
@@ -1866,7 +1855,7 @@ footer {
   .espec-bento-left .btn { padding: 15px 20px !important; font-size: 15px !important; width: 100% !important; justify-content: center !important; align-self: center !important; }
   .espec-bento-right { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; width: 100% !important; }
   .bento-card { width: 100% !important; aspect-ratio: auto !important; height: auto !important; min-height: 150px !important; padding: 12px !important; border-radius: 12px !important; }
-  .bento-card h4 { font-size: 14px !important; margin-bottom: 5px !important; }
+  .bento-card h3 { font-size: 14px !important; margin-bottom: 5px !important; }
   .bento-card p { font-size: 11px !important; line-height: 1.3 !important; }
   .bento-card .bento-icon-top { width: 30px !important; height: 30px !important; font-size: 1rem !important; margin-bottom: 10px !important; }
   .bento-img { aspect-ratio: 1/1 !important; padding: 0 !important; }
@@ -1903,7 +1892,7 @@ footer {
   .tracking-node { display: flex !important; flex-direction: row !important; align-items: flex-start !important; text-align: left !important; padding: 0 !important; width: 100% !important; gap: 15px !important; }
   .node-icon { width: 28px !important; height: 28px !important; font-size: 14px !important; margin: 0 !important; flex-shrink: 0 !important; }
   .node-content { flex: 1 !important; }
-  .node-content h4 { font-size: 18px !important; margin-bottom: 5px !important; }
+  .node-content h3 { font-size: 18px !important; margin-bottom: 5px !important; }
   .node-content p { font-size: 14px !important; margin: 0 !important; }
 
   /* 11. FORM & FAQ */
