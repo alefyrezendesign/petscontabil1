@@ -637,11 +637,12 @@ document.addEventListener('DOMContentLoaded', () => {
           
           setTimeout(() => {
             if (submitBtn.disabled) {
-               showFeedback('Obrigado! Seu formulário foi recebido com sucesso!', 'success');
-               customForm.reset();
-               window.alert = originalAlert; // restaura
+               showFeedback('Erro: Tempo limite de envio excedido. Tente novamente ou entre em contato pelo WhatsApp.', 'error');
+               submitBtn.disabled = false;
+               submitBtn.innerHTML = 'Receber Diagnóstico Gratuito';
+               observer.disconnect();
             }
-          }, 3000);
+          }, 15000);
         }
       });
 
