@@ -19,6 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(el);
   });
 
+  // Load decorative below-the-fold backgrounds shortly before they enter view.
+  const deferredBackgrounds = document.querySelectorAll('[data-background-src]');
+  const backgroundObserver = new IntersectionObserver((entries, instance) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const element = entry.target;
+      const source = element.dataset.backgroundSrc;
+      const background = new Image();
+      background.decoding = 'async';
+      background.onload = () => {
+        element.style.backgroundImage = `linear-gradient(to right, rgba(20,5,40,0.9) 0%, rgba(20,5,40,0.3) 60%, rgba(0,0,0,0) 100%), url("${source}")`;
+        element.classList.add('background-ready');
+      };
+      background.src = source;
+      instance.unobserve(element);
+    });
+  }, { rootMargin: '600px 0px' });
+
+  deferredBackgrounds.forEach(element => backgroundObserver.observe(element));
+
   // Number Counter Animation
   const counters = document.querySelectorAll('.counter');
   const counterObserver = new IntersectionObserver((entries) => {
