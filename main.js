@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById(submitBtnId);
 
     if (customForm && rdContainer) {
-      customForm.addEventListener('submit', (e) => {
+      customForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const nome = document.getElementById(prefix + 'nome').value;
@@ -556,24 +556,19 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
         if(feedbackEl) feedbackEl.style.display = 'none';
 
-        if (typeof window.loadRDStation === 'function') window.loadRDStation();
-
-        let checks = 0;
-        const checkRDTimer = setInterval(() => {
-          const rdForm = rdContainer.querySelector('form');
-          if (rdForm) {
-            clearInterval(checkRDTimer);
-            submitToRD(rdForm);
-          } else {
-            checks++;
-            if (checks > 50) { // 10s
-              clearInterval(checkRDTimer);
-              showFeedback('Erro: Serviço indisponível no momento. Tente novamente.', 'error');
-              submitBtn.innerHTML = originalBtnText;
-              submitBtn.disabled = false;
-            }
+        try {
+          if (typeof window.loadRDStation !== 'function') {
+            throw new Error('Loader do RD Station não encontrado.');
           }
-        }, 200);
+
+          const rdForm = await window.loadRDStation();
+          submitToRD(rdForm);
+        } catch (error) {
+          console.error('[RD Station]', error);
+          showFeedback('Erro: Serviço indisponível no momento. Tente novamente.', 'error');
+          submitBtn.innerHTML = originalBtnText;
+          submitBtn.disabled = false;
+        }
 
         function submitToRD(rdForm) {
           const setRDValue = (nameKeywords, labelText, value) => {
@@ -746,6 +741,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTriggers.forEach(trigger => {
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
+        if (typeof window.loadRDStation === 'function') {
+          window.loadRDStation().catch(() => {});
+        }
         formModal.style.display = 'flex';
       });
     });
@@ -889,26 +887,31 @@ document.addEventListener('DOMContentLoaded', () => {
       window.dispatchEvent(new Event('scroll'));
     }
 
-    // RD Station Lazy Loader
+    // RD Station: carregamento por proximidade ou intenção real
     if (typeof window.loadRDStation === 'function') {
       const diagSection = document.getElementById('diagnostico');
       if (diagSection) {
-        const rdIo = new IntersectionObserver((entries) => {
+        const rdIo = new IntersectionObserver((entries, observer) => {
           if (entries[0].isIntersecting) {
-            window.loadRDStation();
-            rdIo.disconnect();
+            window.loadRDStation().catch(() => {});
+            observer.disconnect();
           }
         }, { rootMargin: '500px' });
         rdIo.observe(diagSection);
       }
-      
-      const triggerLoad = () => { window.loadRDStation(); };
-      document.querySelectorAll('.btn, [href="#diagnostico"], button').forEach(el => {
-        el.addEventListener('mouseenter', triggerLoad, { once: true });
-        el.addEventListener('touchstart', triggerLoad, { once: true, passive: true });
-        el.addEventListener('focus', triggerLoad, { once: true });
+
+      const requestRDStation = () => {
+        window.loadRDStation().catch(() => {});
+      };
+
+      document.querySelectorAll('a[href="#diagnostico"], .form-modal-trigger').forEach(el => {
+        el.addEventListener('pointerenter', requestRDStation, { once: true, passive: true });
+        el.addEventListener('focusin', requestRDStation, { once: true });
+      });
+
+      document.querySelectorAll('#custom-diagnostico-form, #modal-diagnostico-form').forEach(form => {
+        form.addEventListener('focusin', requestRDStation, { once: true });
       });
     }
   });
-
 

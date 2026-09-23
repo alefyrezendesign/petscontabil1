@@ -649,18 +649,105 @@
         <div role="main" id="pets-contabil-consultoria-gratis-222cdde3c5045e41d294"></div>
         <script>
           (function() {
-            var rdLoaded = false;
+            var rdLoadPromise = null;
+            var rdFormId = 'pets-contabil-consultoria-gratis-222cdde3c5045e41d294';
+
+            window.rdStationState = 'idle';
+            window.rdStationReady = null;
+
             window.loadRDStation = function() {
-              if (rdLoaded) return;
-              rdLoaded = true;
-              var script = document.createElement('script');
-              script.type = 'text/javascript';
-              script.src = 'https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js';
-              script.onload = function() {
-                new RDStationForms('pets-contabil-consultoria-gratis-222cdde3c5045e41d294', 'null').createForm();
-              };
-              document.body.appendChild(script);
-            }
+              if (rdLoadPromise) return rdLoadPromise;
+
+              window.rdStationState = 'loading';
+              rdLoadPromise = new Promise(function(resolve, reject) {
+                var host = document.getElementById(rdFormId);
+                var observer;
+                var timeoutId;
+                var settled = false;
+
+                function finish(error, form) {
+                  if (settled) return;
+                  settled = true;
+                  if (observer) observer.disconnect();
+                  if (timeoutId) window.clearTimeout(timeoutId);
+
+                  if (error) {
+                    window.rdStationState = 'error';
+                    reject(error);
+                    return;
+                  }
+
+                  window.rdStationState = 'ready';
+                  window.setTimeout(function() { resolve(form); }, 0);
+                }
+
+                function findForm() {
+                  return host ? host.querySelector('form') : null;
+                }
+
+                function createForm() {
+                  try {
+                    if (typeof window.RDStationForms !== 'function') {
+                      finish(new Error('RD Station não ficou disponível após o carregamento.'));
+                      return;
+                    }
+
+                    new window.RDStationForms(rdFormId, 'null').createForm();
+                    var form = findForm();
+                    if (form) finish(null, form);
+                  } catch (error) {
+                    finish(error);
+                  }
+                }
+
+                if (!host) {
+                  finish(new Error('Container do formulário RD Station não encontrado.'));
+                  return;
+                }
+
+                var readyForm = findForm();
+                if (readyForm) {
+                  finish(null, readyForm);
+                  return;
+                }
+
+                observer = new MutationObserver(function() {
+                  var form = findForm();
+                  if (form) finish(null, form);
+                });
+                observer.observe(host, { childList: true, subtree: true });
+
+                timeoutId = window.setTimeout(function() {
+                  finish(new Error('Tempo limite ao carregar o RD Station.'));
+                }, 30000);
+
+                var existingScript = document.querySelector('script[data-rdstation-forms-loader]');
+                if (existingScript) {
+                  if (typeof window.RDStationForms === 'function') {
+                    createForm();
+                  } else {
+                    existingScript.addEventListener('load', createForm, { once: true });
+                    existingScript.addEventListener('error', function() {
+                      finish(new Error('Falha ao carregar o RD Station.'));
+                    }, { once: true });
+                  }
+                  return;
+                }
+
+                var script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://d335luupugsy2.cloudfront.net/js/rdstation-forms/stable/rdstation-forms.min.js';
+                script.dataset.rdstationFormsLoader = 'true';
+                script.onload = createForm;
+                script.onerror = function() {
+                  finish(new Error('Falha ao carregar o RD Station.'));
+                };
+                document.body.appendChild(script);
+              });
+
+              window.rdStationReady = rdLoadPromise;
+              return rdLoadPromise;
+            };
           })();
         </script>
       </div>
@@ -931,7 +1018,6 @@
   <script type="module" src="/main.js"></script>
 </body>
 </html>
-
 
 
 
